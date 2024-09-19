@@ -5,6 +5,7 @@ import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import { fetchImagesWithTopic } from "./images-api.js";
 import Loader from "./components/Loader/Loader.jsx";
+import ErrorMessage from "./components/ErrorMessage/ErrorMessage.jsx";
 
 function App() {
   const [images, setImages] = useState([]);
@@ -18,7 +19,7 @@ function App() {
       setLoading(true);
       const data = await fetchImagesWithTopic(topic);
       setImages(data);
-    } catch (error) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
@@ -30,9 +31,7 @@ function App() {
       <h1>Image Search</h1>
       <SearchBar onSubmit={handleSubmit} />
 
-      {error && (
-        <p>Whoops, something went wrong! Please try reloading this page!</p>
-      )}
+      {error && <ErrorMessage />}
       {images.length > 0 && <ImageGallery images={images} />}
       {loading && <Loader />}
     </>
