@@ -4,6 +4,7 @@ import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import { fetchImagesWithTopic } from "./images-api.js";
+import Loader from "./components/Loader/Loader.jsx";
 
 function App() {
   const [images, setImages] = useState([]);
@@ -17,11 +18,6 @@ function App() {
       setLoading(true);
       const data = await fetchImagesWithTopic(topic);
       setImages(data);
-      // const response = await axios.get(
-      //   "https://api.unsplash.com/photos/?client_id=DANKlgAbccLybPfVyNlkfj3soumKRCnnLisBk1-go5g"
-      // );
-      // console.log(response);
-      // setImages(response.data.hits);
     } catch (error) {
       setError(true);
     } finally {
@@ -33,11 +29,12 @@ function App() {
     <>
       <h1>Image Search</h1>
       <SearchBar onSubmit={handleSubmit} />
-      {loading && <p>Loading data, please wait ...</p>}
+
       {error && (
         <p>Whoops, something went wrong! Please try reloading this page!</p>
       )}
-      {images && <ImageGallery images={images} />}
+      {images.length > 0 && <ImageGallery images={images} />}
+      {loading && <Loader />}
     </>
   );
 }
@@ -47,3 +44,20 @@ export default App;
 // axios.get(
 //   "https://api.unsplash.com/photos/?client_id=DANKlgAbccLybPfVyNlkfj3soumKRCnnLisBk1-go5g"
 // );
+
+// render(
+//   <DNA
+//     visible={true}
+//     height="80"
+//     width="80"
+//     ariaLabel="dna-loading"
+//     wrapperStyle={{}}
+//     wrapperClass="dna-wrapper"
+//   />
+// );
+
+// const response = await axios.get(
+//   "https://api.unsplash.com/photos/?client_id=DANKlgAbccLybPfVyNlkfj3soumKRCnnLisBk1-go5g"
+// );
+// console.log(response);
+// setImages(response.data.hits);
