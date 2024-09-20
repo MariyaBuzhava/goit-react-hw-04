@@ -1,9 +1,9 @@
 // import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
-import { fetchImagesWithTopic } from "./images-api.js";
+import { fetchImages } from "./services/images-api.js";
 import Loader from "./components/Loader/Loader.jsx";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage.jsx";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn.jsx";
@@ -12,73 +12,52 @@ function App() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
 
-  const handleSubmit = async (topic) => {
-    try {
-      setError(false);
-      setLoading(true);
-      const data = await fetchImagesWithTopic(topic, page);
-      setImages((prev) => [...prev, ...data]);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!query) return;
+    const handleSubmit = async () => {
+      try {
+        setError(false);
+        setLoading(true);
+        const data = await fetchImages(query, page);
 
-  // useEffect(() => {
-  //   const handleSubmit = async (topic) => {
-  //     try {
-  //       // setImages([]);
-  //       setError(false);
-  //       setLoading(true);
-  //       const data = await fetchImagesWithTopic(topic, page);
-  //       setImages((prev) => [...prev, ...data.hits]);
-  //     } catch {
-  //       setError(true);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   handleSubmit();
-  // }, [page]);
+        setImages((prev) => [...prev, ...data.results]);
+
+        setTotalPages(data.total_pages);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    handleSubmit();
+  }, [query, page]);
 
   const handleChangePage = () => {
     setPage((prev) => prev + 1);
   };
 
+  const handleSetQuery = (topic) => {
+    setQuery(topic);
+    setImages([]);
+    setPage(1);
+  };
+
   return (
     <>
       <h1>Image Search</h1>
-      <SearchBar onSubmit={handleSubmit} />
+      <SearchBar onSubmit={handleSetQuery} />
       {error && <ErrorMessage />}
       {images.length > 0 && <ImageGallery images={images} />}
       {loading && <Loader />}
-      <LoadMoreBtn onClick={handleChangePage} />
+      {!loading && page < totalPages && (
+        <LoadMoreBtn onClick={handleChangePage} />
+      )}
     </>
   );
 }
 
 export default App;
-
-// axios.get(
-//   "https://api.unsplash.com/photos/?client_id=DANKlgAbccLybPfVyNlkfj3soumKRCnnLisBk1-go5g"
-// );
-
-// render(
-//   <DNA
-//     visible={true}
-//     height="80"
-//     width="80"
-//     ariaLabel="dna-loading"
-//     wrapperStyle={{}}
-//     wrapperClass="dna-wrapper"
-//   />
-// );
-
-// const response = await axios.get(
-//   "https://api.unsplash.com/photos/?client_id=DANKlgAbccLybPfVyNlkfj3soumKRCnnLisBk1-go5g"
-// );
-// console.log(response);
-// setImages(response.data.hits);
