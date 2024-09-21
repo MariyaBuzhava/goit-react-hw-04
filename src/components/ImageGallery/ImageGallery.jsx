@@ -2,16 +2,23 @@
 
 import ImageCard from "../ImageCard/ImageCard.jsx";
 
-const ImageGallery = ({ images }) => {
+const ImageGallery = ({ images, onImageClick }) => {
   if (!images || images.length === 0) {
     return <p>No images found</p>;
   }
+
   return (
-    <ul>
-      {images.map((image) => (
-        <ImageCard key={image.id} image={image} />
-      ))}
-    </ul>
+    <div>
+      <ul>
+        {images.map((image) => (
+          <ImageCard
+            key={image.id}
+            image={image}
+            onClick={() => onImageClick(image.urls.regular)}
+          />
+        ))}
+      </ul>
+    </div>
   );
 };
 

@@ -1,4 +1,5 @@
-// import axios from "axios";
+import ReactModal from "react-modal";
+
 import { useState, useEffect } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar";
@@ -7,6 +8,9 @@ import { fetchImages } from "./services/images-api.js";
 import Loader from "./components/Loader/Loader.jsx";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage.jsx";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn.jsx";
+import ImageModal from "./components/ImageModal/ImageModal.jsx";
+
+ReactModal.setAppElement("#root");
 
 function App() {
   const [images, setImages] = useState([]);
@@ -15,6 +19,8 @@ function App() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     if (!query) return;
@@ -46,15 +52,33 @@ function App() {
     setPage(1);
   };
 
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsOpen(true);
+  };
+  const closeModal = () => {
+    setIsOpen(false);
+    setSelectedImage(null);
+  };
+
   return (
     <>
       <h1>Image Search</h1>
       <SearchBar onSubmit={handleSetQuery} />
       {error && <ErrorMessage />}
-      {images.length > 0 && <ImageGallery images={images} />}
+      {images.length > 0 && (
+        <ImageGallery images={images} onImageClick={openModal} />
+      )}
       {loading && <Loader />}
       {!loading && page < totalPages && (
         <LoadMoreBtn onClick={handleChangePage} />
+      )}
+      {selectedImage && (
+        <ImageModal
+          isOpen={modalIsOpen}
+          onClose={closeModal}
+          imageUrl={selectedImage}
+        />
       )}
     </>
   );
