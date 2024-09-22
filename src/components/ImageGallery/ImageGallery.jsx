@@ -1,4 +1,4 @@
-// import c from './ImageGallery.module.css'
+import c from "./ImageGallery.module.css";
 
 import ImageCard from "../ImageCard/ImageCard.jsx";
 
@@ -9,12 +9,12 @@ const ImageGallery = ({ images, onImageClick }) => {
 
   return (
     <div>
-      <ul>
+      <ul className={c.imageGallery}>
         {images.map((image) => (
           <ImageCard
             key={image.id}
             image={image}
-            onClick={() => onImageClick(image.urls.regular)}
+            onClick={() => onImageClick(image)}
           />
         ))}
       </ul>
