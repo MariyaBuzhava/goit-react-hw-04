@@ -9,7 +9,7 @@ import Loader from "./components/Loader/Loader.jsx";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage.jsx";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn.jsx";
 import ImageModal from "./components/ImageModal/ImageModal.jsx";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 ReactModal.setAppElement("#root");
 
@@ -78,6 +78,7 @@ function App() {
     <>
       <h1>Image Search</h1>
       <SearchBar onSubmit={handleSetQuery} />
+      <Toaster />
       {error && <ErrorMessage />}
       {images.length > 0 && (
         <ImageGallery
